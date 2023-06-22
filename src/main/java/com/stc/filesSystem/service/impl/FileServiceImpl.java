@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.io.ByteArrayOutputStream;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
@@ -86,7 +87,7 @@ public class FileServiceImpl implements FileService {
 		deflater.finish();
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(byteArr.length);
-		byte[] tmp = new byte[4 * 1024];
+		byte[] tmp = new byte[byteArr.length];
 		while (!deflater.finished()) {
 			int size = deflater.deflate(tmp);
 			outputStream.write(tmp, 0, size);
@@ -101,13 +102,14 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public byte[] decompressFile(byte[] data) {
-		Inflater inflater = new Inflater();
-		inflater.setInput(data);
+		Inflater i = new Inflater();
+		i.setInput(data);
+		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-		byte[] tmp = new byte[4 * 1024];
+		byte[] tmp = new byte[4*1024];
 		try {
-			while (!inflater.finished()) {
-				int count = inflater.inflate(tmp);
+			while (!i.finished()) {
+				int count = i.inflate(tmp);
 				outputStream.write(tmp, 0, count);
 			}
 			outputStream.close();
@@ -115,4 +117,6 @@ public class FileServiceImpl implements FileService {
 		}
 		return outputStream.toByteArray();
 	}
+
+
 }

@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.stc.filesSystem.enums.ErrorCode.DATA_NOT_VALID;
@@ -117,8 +118,30 @@ public class ItemServiceImpl implements ItemService {
                 Item newfileItem = new Item(null, itemDto.getType(), itemDto.getName(), parentItem.getPermissionGroup(), parentItem, null);
                 itemRepository.saveAndFlush(newfileItem);
                
-                File newFile = new File(null, fileService.getBinaryData(itemDto.getFile()).toString(), newfileItem);
+                File newFile = new File(null, fileService.getBinaryData(itemDto.getFile()),itemDto.getFile().getContentType(), newfileItem);
                 return fileService.saveFile(newFile).getItem();
+
+            } else {
+                throw new ObjectNotFoundException(String.format("The UserEmail doesn't has access", itemDto.getUserName()));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    public File downloadFileById(ItemDto itemDto) throws Exception {
+        try {
+
+            Item parentItem =  getItemById(itemDto.getParentId());
+            List<Permission> permissions = permissionService.getUserPermissionsUnderGroupX(itemDto.getUserName(), parentItem.getPermissionGroup().getId());
+
+            if (permissions.stream().anyMatch(permission -> permission.getPermissionLevel().equals(PermissionLevel.EDIT))) {
+            	File file = fileService.getFileById(itemDto.getFileId());
+                file.setBinary(fileService.decompressFile(file.getBinary()));
+                
+                return file;
 
             } else {
                 throw new ObjectNotFoundException(String.format("The UserEmail doesn't has access", itemDto.getUserName()));

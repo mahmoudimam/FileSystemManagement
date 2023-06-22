@@ -21,17 +21,20 @@ public class ItemDto {
     private Long permissionGroupId;
 
     private MultipartFile file;
+    
+    private Long fileId;
 
 	public ItemDto() {
 	}
 
-	public ItemDto(ItemType type, String name, String userName, Long parentId, Long permissionGroupId, MultipartFile file) {
+	public ItemDto(ItemType type, String name, String userName, Long parentId, Long permissionGroupId, MultipartFile file, Long fileId) {
 		this.type = type;
 		this.name = name;
 		this.userName = userName;
 		this.parentId = parentId;
 		this.permissionGroupId = permissionGroupId;
 		this.file = file;
+		this.fileId =fileId;
 	}
 
 	public ItemType getType() {
@@ -81,4 +84,14 @@ public class ItemDto {
 	public void setFile(MultipartFile file) {
 		this.file = file;
 	}
+
+	public Long getFileId() {
+		return fileId;
+	}
+
+	public void setFileId(Long fileId) {
+		this.fileId = fileId;
+	}
+	
+	
 }

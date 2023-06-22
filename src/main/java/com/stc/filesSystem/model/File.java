@@ -25,13 +25,13 @@ public class File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "bin", columnDefinition = "text")
-    @JsonIgnore
-    private String binary;
     
-//    @Lob
-//    @Column(name = "bin", length = 1000, columnDefinition = "bigint")
-//    private byte[] binary;
+    @Lob
+    @Column(name = "bin", length = 1000, columnDefinition="bigint NOT NULL")
+    @JsonIgnore
+    private byte[] binary;
+    
+    private String filetype;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
@@ -40,9 +40,10 @@ public class File {
     public File() {
     }
 
-    public File(Long id, String binary, Item item) {
+    public File(Long id, byte[] binary, String filetype, Item item) {
         this.id = id;
         this.binary = binary;
+        this.filetype = filetype;
         this.item = item;
     }
 
@@ -56,11 +57,11 @@ public class File {
 
 
 
-    public String getBinary() {
+    public byte[] getBinary() {
 		return binary;
 	}
 
-	public void setBinary(String binary) {
+	public void setBinary(byte[] binary) {
 		this.binary = binary;
 	}
 
@@ -71,4 +72,21 @@ public class File {
     public void setItem(Item item) {
         this.item = item;
     }
+    
+    
+
+	public String getFiletype() {
+		return filetype;
+	}
+
+	public void setFiletype(String filetype) {
+		this.filetype = filetype;
+	}
+
+	@Override
+	public String toString() {
+		return "File [id=" + id + ", binary=" + binary + "]";
+	}
+    
+    
 }

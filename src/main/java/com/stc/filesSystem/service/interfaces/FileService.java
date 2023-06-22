@@ -23,6 +23,7 @@ public interface FileService {
     byte[] getBinaryData(MultipartFile file) throws IOException;
     
     byte[] decompressFile(byte[] data);
+    
 
 
 }
